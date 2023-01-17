@@ -25,15 +25,27 @@ function DropDownMenu({
     setValue(event.target.value);
   };
 
+  const menuItem = () => {
+    if (inputLabel === 'restaurant') {
+      return dropDownMenuObjects?.map(({ restaurant }, index) => (
+        <MenuItem key={index} value={restaurant}>
+          {restaurant}
+        </MenuItem>
+      ));
+    } else {
+      return dropDownMenuObjects?.map(({ name }, index) => (
+        <MenuItem key={index} value={name}>
+          {name}
+        </MenuItem>
+      ));
+    }
+  };
+
   return (
     <FormControl sx={{ width: '300px' }}>
       <InputLabel>{inputLabel}</InputLabel>
       <Select value={value} onChange={handleChange}>
-        {dropDownMenuObjects?.map(({ name }, index) => (
-          <MenuItem key={index} value={name}>
-            {name}
-          </MenuItem>
-        ))}
+        {menuItem()}
       </Select>
     </FormControl>
   );

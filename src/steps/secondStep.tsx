@@ -1,13 +1,19 @@
 import { Box, Grid, Typography } from '@mui/material';
+import { IDishesaObject } from 'App';
 import DropDownMenu from 'components/dropDownMenu';
 import React from 'react';
 
 interface ISecondStep {
+  availableRestaurant: IDishesaObject[];
   restaurant: string | undefined;
   setRestaurant: (value: string) => void;
 }
 
-function SecondStep({ restaurant, setRestaurant }: ISecondStep) {
+function SecondStep({
+  availableRestaurant,
+  restaurant,
+  setRestaurant,
+}: ISecondStep) {
   return (
     <Box>
       <Grid
@@ -22,6 +28,7 @@ function SecondStep({ restaurant, setRestaurant }: ISecondStep) {
             inputLabel="restaurant"
             value={restaurant}
             setValue={setRestaurant}
+            dropDownMenuObjects={availableRestaurant}
           />
         </Grid>
       </Grid>

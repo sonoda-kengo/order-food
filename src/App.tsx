@@ -12,6 +12,7 @@ import SecondStep from 'steps/secondStep';
 import ReviewStep from 'steps/reviewStep';
 import ThirdStep from 'steps/thirdStep';
 import { Box } from '@mui/system';
+import { GetRestaurantData } from 'features/getRestaurantData';
 
 export type typeMeal = 'breakfast' | 'lunch' | 'dinner';
 
@@ -32,14 +33,20 @@ function App() {
   const [step, setStep] = React.useState(1);
   const [meal, setMeal] = React.useState<typeMeal>();
   const [people, setPeople] = React.useState(1);
+  const [availavleRestaurant, setAvailableRestaurant] = React.useState<
+    IDishesaObject[] | undefined
+  >();
   const [restaurant, setRestaurant] = React.useState<string>();
   const [dishes, setDishes] = React.useState<string>();
   const [dishesNum, setDishesNum] = React.useState(1);
 
   useEffect(() => {
-    console.log(meal);
-    console.log(people);
-  }, [meal, people]);
+    if (meal) {
+      const restaurants = GetRestaurantData(meal);
+      console.log(restaurants);
+      setAvailableRestaurant(restaurants);
+    }
+  }, [meal]);
 
   const incStep = () => {
     setStep(step + 1);
@@ -50,7 +57,10 @@ function App() {
   };
 
   const submitForm = () => {
-    console.log('submit');
+    console.log('meal', meal);
+    console.log('people', people);
+    console.log('restaurant', restaurant);
+    console.log('dishes', dishes);
   };
 
   const steps = [
@@ -81,8 +91,12 @@ function App() {
             setPeople={setPeople}
           />
         )}
-        {step === 2 && (
-          <SecondStep restaurant={restaurant} setRestaurant={setRestaurant} />
+        {step === 2 && availavleRestaurant && (
+          <SecondStep
+            availableRestaurant={availavleRestaurant}
+            restaurant={restaurant}
+            setRestaurant={setRestaurant}
+          />
         )}
         {step === 3 && (
           <ThirdStep
