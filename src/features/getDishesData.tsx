@@ -19,8 +19,5 @@ export const GetDishesData = (meal: string, restaurant: string) => {
     }
   });
 
-  console.log('availableRestaurantList', availableRestaurantList);
-  console.log('availableDishesList', availableDishesList);
-
   return availableDishesList;
 };

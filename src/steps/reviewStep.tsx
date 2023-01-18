@@ -1,13 +1,21 @@
-import { Box, Grid, Button, Typography } from '@mui/material';
-import DropDownMenu from 'components/dropDownMenu';
-import NumTextField from 'components/numTextField';
+import { Box, Grid, Typography } from '@mui/material';
 import React from 'react';
 
 interface IReviewStep {
-  meal?: string;
+  meal: string;
+  people: number;
+  restaurant: string;
+  dishes: string;
+  servings: number;
 }
 
-function ReviewStep({ meal }: IReviewStep) {
+function ReviewStep({
+  meal,
+  people,
+  restaurant,
+  dishes,
+  servings,
+}: IReviewStep) {
   return (
     <Box>
       <Grid
@@ -22,7 +30,7 @@ function ReviewStep({ meal }: IReviewStep) {
               <Typography>Meal</Typography>
             </Grid>
             <Grid item>
-              <Typography>Lunch</Typography>
+              <Typography>{meal}</Typography>
             </Grid>
           </Grid>
         </Grid>
@@ -32,7 +40,7 @@ function ReviewStep({ meal }: IReviewStep) {
               <Typography>No. of. People</Typography>
             </Grid>
             <Grid item>
-              <Typography>3</Typography>
+              <Typography>{people}</Typography>
             </Grid>
           </Grid>
         </Grid>
@@ -42,7 +50,7 @@ function ReviewStep({ meal }: IReviewStep) {
               <Typography>Restaurant</Typography>
             </Grid>
             <Grid item>
-              <Typography>Restaurant A</Typography>
+              <Typography>{restaurant}</Typography>
             </Grid>
           </Grid>
         </Grid>
@@ -52,7 +60,9 @@ function ReviewStep({ meal }: IReviewStep) {
               <Typography>Dishes</Typography>
             </Grid>
             <Grid item>
-              <Typography>aaa 1</Typography>
+              <Typography>
+                {dishes} {servings}
+              </Typography>
             </Grid>
           </Grid>
         </Grid>

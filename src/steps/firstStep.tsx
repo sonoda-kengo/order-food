@@ -1,18 +1,11 @@
 import { Box, Grid, Typography } from '@mui/material';
-import { InputFormType } from 'App';
+import { FormErrorsType, InputFormType } from 'App';
 import React from 'react';
-import { FieldErrorsImpl, UseFormRegister } from 'react-hook-form';
+import { UseFormRegister } from 'react-hook-form';
 
 interface IFirstStep {
   register: UseFormRegister<InputFormType>;
-  errors: Partial<
-    FieldErrorsImpl<{
-      meal: string;
-      people: number;
-      restaurant: string;
-      dishes: object;
-    }>
-  >;
+  errors: FormErrorsType;
 }
 
 const numberRegExp = /^[0-9]+$/;
@@ -28,7 +21,7 @@ function FirstStep({ register, errors }: IFirstStep) {
       >
         <Grid item mb={5}>
           <Typography>Please Select a meal</Typography>
-          <select {...register('meal', { required: 'required' })}>
+          <select {...register('meal', { required: 'Meal is required' })}>
             <option value="breakfast">breakfast</option>
             <option value="lunch">lunch</option>
             <option value="dinner">dinner</option>
@@ -41,23 +34,23 @@ function FirstStep({ register, errors }: IFirstStep) {
             type="number"
             {...register('people', {
               valueAsNumber: true,
-              required: '必須項目です',
+              required: 'Number of people is required',
               pattern: {
                 value: numberRegExp,
-                message: '整数で入力してください',
+                message: 'Enter an integer',
               },
               min: {
                 value: 1,
-                message: '1以上の数字を入力してください',
+                message: 'Numbers must be greater than 0',
               },
               max: {
                 value: 10,
-                message: '10以下の数字を入力してください',
+                message: 'Numbers must be less than 10',
               },
             })}
           />
-          <Typography color="warning.main">{errors.people?.message}</Typography>
         </Grid>
+        <Typography color="warning.main">{errors.people?.message}</Typography>
       </Grid>
     </Box>
   );

@@ -1,24 +1,23 @@
 import { Box, Grid, Typography } from '@mui/material';
-import { IDishesObject, InputFormType } from 'App';
+import { FormErrorsType, IDishesObject, InputFormType } from 'App';
 import React from 'react';
-import { FieldErrorsImpl, UseFormRegister } from 'react-hook-form';
+import { UseFormRegister } from 'react-hook-form';
 
 interface IThirdStep {
+  setPeople: number;
   availavleDishes: IDishesObject[];
   register: UseFormRegister<InputFormType>;
-  errors: Partial<
-    FieldErrorsImpl<{
-      meal: string;
-      people: number;
-      restaurant: string;
-      dishes: object;
-    }>
-  >;
+  errors: FormErrorsType;
 }
 
 const numberRegExp = /^[0-9]+$/;
 
-function ThirdStep({ availavleDishes, register, errors }: IThirdStep) {
+function ThirdStep({
+  setPeople,
+  availavleDishes,
+  register,
+  errors,
+}: IThirdStep) {
   return (
     <Box>
       <Grid
@@ -29,13 +28,14 @@ function ThirdStep({ availavleDishes, register, errors }: IThirdStep) {
       >
         <Grid item mb={5}>
           <Typography>Please Select a Dish</Typography>
-          <select {...register('dishes', { required: 'required' })}>
-            {availavleDishes.map((val, id) => (
+          <select {...register('dishes', { required: 'Dish is required' })}>
+            {availavleDishes.map((val) => (
               <option key={val.id} value={val.name}>
                 {val.name}
               </option>
             ))}
           </select>
+          <Typography color="warning.main">{errors.dishes?.message}</Typography>
         </Grid>
         <Grid item mb={5}>
           <Typography>Please Enter Number of seivings</Typography>
@@ -43,22 +43,25 @@ function ThirdStep({ availavleDishes, register, errors }: IThirdStep) {
             type="number"
             {...register('servings', {
               valueAsNumber: true,
-              required: '必須項目です',
+              required: 'Servings is required',
               pattern: {
                 value: numberRegExp,
-                message: '整数で入力してください',
+                message: 'Enter an integer',
               },
               min: {
                 value: 1,
-                message: '1以上の数字を入力してください',
+                message: 'Numbers must be greater than 0',
               },
               max: {
-                value: 10,
-                message: '10以下の数字を入力してください',
+                value: 10 * setPeople,
+                message: `Numbers must be less than ${
+                  10 * setPeople
+                } (you can set up to 10 per No. of people)`,
               },
             })}
           />
         </Grid>
+        <Typography color="warning.main">{errors.servings?.message}</Typography>
       </Grid>
     </Box>
   );

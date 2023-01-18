@@ -15,6 +15,7 @@ import FirstStep from 'steps/firstStep';
 import ReviewStep from 'steps/reviewStep';
 import SecondStep from 'steps/secondStep';
 import ThirdStep from 'steps/thirdStep';
+import { FieldErrorsImpl } from 'react-hook-form';
 
 export interface IDish {
   dishName: string;
@@ -41,6 +42,8 @@ export type InputFormType = {
   servings: number;
 };
 
+export type FormErrorsType = Partial<FieldErrorsImpl<InputFormType>>;
+
 function App() {
   const [step, setStep] = React.useState(1);
   const [availavleRestaurant, setAvailableRestaurant] = React.useState<
@@ -51,6 +54,7 @@ function App() {
   >();
   const [showSecondStep, setShowSecondStep] = React.useState(false);
   const [showThirdStep, setShowThirdStep] = React.useState(false);
+  const [showFourthStep, setShowFourthStep] = React.useState(false);
   const [showNextButton, setShowNextButton] = React.useState(false);
 
   const steps = [
@@ -69,8 +73,6 @@ function App() {
     } = useForm<InputFormType>({
       mode: 'all',
       defaultValues: {
-        meal: '',
-        restaurant: '',
         servings: 1,
       },
     });
@@ -96,7 +98,7 @@ function App() {
 
     // showSecondStep
     useEffect(() => {
-      if (watch('meal') != '') {
+      if (watch('meal')) {
         if (0 < watch('people') && watch('people') < 11) {
           setShowSecondStep(true);
         } else {
@@ -109,17 +111,32 @@ function App() {
 
     // showThirdStep
     useEffect(() => {
-      if (watch('restaurant') != '') {
+      if (watch('restaurant')) {
         setShowThirdStep(true);
       } else {
         setShowThirdStep(false);
       }
     }, [watch('restaurant')]);
 
+    // showFourthStep
+    useEffect(() => {
+      console.log('servings', watch('servings'));
+      console.log('showFourthStep', showFourthStep);
+      if (0 < watch('servings') && watch('servings') < 11) {
+        console.log('set true');
+        setShowFourthStep(true);
+      } else {
+        setShowFourthStep(false);
+      }
+    }, [watch('servings')]);
+
+    // showNextStep
     useEffect(() => {
       if (step === 1 && showSecondStep) {
         setShowNextButton(true);
       } else if (step === 2 && showThirdStep) {
+        setShowNextButton(true);
+      } else if (step === 3 && showFourthStep) {
         setShowNextButton(true);
       } else {
         setShowNextButton(false);
@@ -148,12 +165,21 @@ function App() {
         )}
         {step === 3 && availavleDishes && (
           <ThirdStep
+            setPeople={watch('people')}
             availavleDishes={availavleDishes}
             register={register}
             errors={errors}
           />
         )}
-        {step === 4 && <ReviewStep />}
+        {step === 4 && (
+          <ReviewStep
+            meal={watch('meal')}
+            people={watch('people')}
+            restaurant={watch('restaurant')}
+            dishes={watch('dishes')}
+            servings={watch('servings')}
+          />
+        )}
 
         <Grid container>
           {step !== 1 && (
