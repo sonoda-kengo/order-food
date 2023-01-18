@@ -18,6 +18,7 @@ function ThirdStep({
   register,
   errors,
 }: IThirdStep) {
+  // TODO: add menu butoon
   return (
     <Box>
       <Grid
