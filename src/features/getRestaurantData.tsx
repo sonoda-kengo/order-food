@@ -1,13 +1,27 @@
-import { typeMeal } from 'App';
+import { typeMeal, IRestaurantObject } from 'App';
 import data from '../data/dishes.json';
 
 export const GetRestaurantData = (meal: typeMeal) => {
-  console.log('GetRestaurantData');
   const allDishesData = data.dishes;
-  const availableRestaurant = allDishesData.filter(function (value) {
+
+  // get data with meal
+  const availableRestaurantList = allDishesData.filter((value) => {
     if (value.availableMeals.includes(meal)) {
       return value;
     }
   });
-  return availableRestaurant;
+
+  // cast(data -> IRestaurantObjectType)
+  const restaurantList: IRestaurantObject[] = [];
+  availableRestaurantList.forEach((data) => {
+    const obj: IRestaurantObject = { restaurant: data.restaurant };
+    restaurantList.push(obj);
+  });
+
+  // delete dupulicates
+  const uniqueRestaurant = Array.from(
+    new Map(restaurantList.map((data) => [data.restaurant, data])).values(),
+  );
+
+  return uniqueRestaurant;
 };

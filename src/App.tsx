@@ -22,11 +22,15 @@ export interface IDish {
 }
 export type typeDishes = IDish[];
 
-export interface IDishesaObject {
+export interface IDishesObject {
   id?: number;
   name: string;
   restaurant?: string;
   availableMeals?: string[];
+}
+
+export interface IRestaurantObject {
+  restaurant?: string;
 }
 
 function App() {
@@ -34,7 +38,7 @@ function App() {
   const [meal, setMeal] = React.useState<typeMeal>();
   const [people, setPeople] = React.useState(1);
   const [availavleRestaurant, setAvailableRestaurant] = React.useState<
-    IDishesaObject[] | undefined
+    IRestaurantObject[] | undefined
   >();
   const [restaurant, setRestaurant] = React.useState<string>();
   const [dishes, setDishes] = React.useState<string>();
@@ -43,7 +47,6 @@ function App() {
   useEffect(() => {
     if (meal) {
       const restaurants = GetRestaurantData(meal);
-      console.log(restaurants);
       setAvailableRestaurant(restaurants);
     }
   }, [meal]);
