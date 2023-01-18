@@ -5,14 +5,15 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
-import { IDishesaObject, typeMeal } from 'App';
+import { IDishesObject, IRestaurantObject } from 'App';
 import React from 'react';
 
 interface IDropDownMenu {
   inputLabel: string;
-  value: typeMeal | string | undefined;
+  value: string | undefined;
   setValue: (value: any) => void;
-  dropDownMenuObjects?: IDishesaObject[];
+  dropDownMenuObjects?: IDishesObject[];
+  restaurantObjects?: IRestaurantObject[];
 }
 
 function DropDownMenu({
@@ -20,14 +21,15 @@ function DropDownMenu({
   value,
   setValue,
   dropDownMenuObjects,
+  restaurantObjects,
 }: IDropDownMenu) {
   const handleChange = (event: SelectChangeEvent) => {
     setValue(event.target.value);
   };
 
   const menuItem = () => {
-    if (inputLabel === 'restaurant') {
-      return dropDownMenuObjects?.map(({ restaurant }, index) => (
+    if (restaurantObjects) {
+      return restaurantObjects?.map(({ restaurant }, index) => (
         <MenuItem key={index} value={restaurant}>
           {restaurant}
         </MenuItem>

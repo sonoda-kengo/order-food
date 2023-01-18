@@ -6,15 +6,16 @@ import {
   StepLabel,
   Stepper,
 } from '@mui/material';
-import FirstStep from 'steps/firstStep';
-import React, { useEffect } from 'react';
-import SecondStep from 'steps/secondStep';
-import ReviewStep from 'steps/reviewStep';
-import ThirdStep from 'steps/thirdStep';
 import { Box } from '@mui/system';
-import { GetRestaurantData } from 'features/getRestaurantData';
-
-export type typeMeal = 'breakfast' | 'lunch' | 'dinner';
+import { GetDishesData } from 'features/getDishesData';
+import { GetRestaurantsData } from 'features/getRestaurantsData';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import FirstStep from 'steps/firstStep';
+import ReviewStep from 'steps/reviewStep';
+import SecondStep from 'steps/secondStep';
+import ThirdStep from 'steps/thirdStep';
+import { FieldErrorsImpl } from 'react-hook-form';
 
 export interface IDish {
   dishName: string;
@@ -22,46 +23,39 @@ export interface IDish {
 }
 export type typeDishes = IDish[];
 
-export interface IDishesaObject {
+export interface IDishesObject {
   id?: number;
   name: string;
   restaurant?: string;
   availableMeals?: string[];
 }
 
+export interface IRestaurantObject {
+  restaurant: string;
+}
+
+export type InputFormType = {
+  meal: string;
+  people: number;
+  restaurant: string;
+  dishes: string;
+  servings: number;
+};
+
+export type FormErrorsType = Partial<FieldErrorsImpl<InputFormType>>;
+
 function App() {
   const [step, setStep] = React.useState(1);
-  const [meal, setMeal] = React.useState<typeMeal>();
-  const [people, setPeople] = React.useState(1);
   const [availavleRestaurant, setAvailableRestaurant] = React.useState<
-    IDishesaObject[] | undefined
+    IRestaurantObject[] | undefined
   >();
-  const [restaurant, setRestaurant] = React.useState<string>();
-  const [dishes, setDishes] = React.useState<string>();
-  const [dishesNum, setDishesNum] = React.useState(1);
-
-  useEffect(() => {
-    if (meal) {
-      const restaurants = GetRestaurantData(meal);
-      console.log(restaurants);
-      setAvailableRestaurant(restaurants);
-    }
-  }, [meal]);
-
-  const incStep = () => {
-    setStep(step + 1);
-  };
-
-  const decStep = () => {
-    setStep(step - 1);
-  };
-
-  const submitForm = () => {
-    console.log('meal', meal);
-    console.log('people', people);
-    console.log('restaurant', restaurant);
-    console.log('dishes', dishes);
-  };
+  const [availavleDishes, setAvailableDishes] = React.useState<
+    IDishesObject[] | undefined
+  >();
+  const [showSecondStep, setShowSecondStep] = React.useState(false);
+  const [showThirdStep, setShowThirdStep] = React.useState(false);
+  const [showFourthStep, setShowFourthStep] = React.useState(false);
+  const [showNextButton, setShowNextButton] = React.useState(false);
 
   const steps = [
     'Select a meal and set people',
@@ -71,6 +65,88 @@ function App() {
   ];
 
   const showPages = () => {
+    const {
+      register,
+      handleSubmit,
+      watch,
+      formState: { errors },
+    } = useForm<InputFormType>({
+      mode: 'all',
+      defaultValues: {
+        servings: 1,
+      },
+    });
+
+    const onSubmit = handleSubmit((data) => {
+      console.log(data);
+    });
+
+    const incStep = () => {
+      if (step === 1 && watch('meal')) {
+        const getRestaurants = GetRestaurantsData(watch('meal'));
+        setAvailableRestaurant(getRestaurants);
+      } else if (step === 2 && availavleRestaurant && watch('restaurant')) {
+        const getDishes = GetDishesData(watch('meal'), watch('restaurant'));
+        setAvailableDishes(getDishes);
+      }
+      setStep(step + 1);
+    };
+
+    const decStep = () => {
+      setStep(step - 1);
+    };
+
+    // showSecondStep
+    useEffect(() => {
+      if (watch('meal')) {
+        if (0 < watch('people') && watch('people') < 11) {
+          setShowSecondStep(true);
+        } else {
+          setShowSecondStep(false);
+        }
+      } else {
+        setShowSecondStep(false);
+      }
+    }, [watch('meal'), watch('people')]);
+
+    // showThirdStep
+    useEffect(() => {
+      if (watch('restaurant')) {
+        setShowThirdStep(true);
+      } else {
+        setShowThirdStep(false);
+      }
+    }, [watch('restaurant')]);
+
+    // showFourthStep
+    useEffect(() => {
+      if (watch('dishes')) {
+        if (
+          0 < watch('servings') &&
+          watch('servings') <= 10 * watch('people')
+        ) {
+          setShowFourthStep(true);
+        } else {
+          setShowFourthStep(false);
+        }
+      } else {
+        setShowFourthStep(false);
+      }
+    }, [watch('dishes'), watch('servings')]);
+
+    // showNextStep
+    useEffect(() => {
+      if (step === 1 && showSecondStep) {
+        setShowNextButton(true);
+      } else if (step === 2 && showThirdStep) {
+        setShowNextButton(true);
+      } else if (step === 3 && showFourthStep) {
+        setShowNextButton(true);
+      } else {
+        setShowNextButton(false);
+      }
+    }, [showSecondStep, showThirdStep, showFourthStep, step]);
+
     return (
       <div>
         <Box sx={{ width: '100%' }} my={5}>
@@ -83,30 +159,31 @@ function App() {
           </Stepper>
         </Box>
 
-        {step === 1 && (
-          <FirstStep
-            meal={meal}
-            setMeal={setMeal}
-            people={people}
-            setPeople={setPeople}
-          />
-        )}
+        {step === 1 && <FirstStep register={register} errors={errors} />}
         {step === 2 && availavleRestaurant && (
           <SecondStep
             availableRestaurant={availavleRestaurant}
-            restaurant={restaurant}
-            setRestaurant={setRestaurant}
+            register={register}
+            errors={errors}
           />
         )}
-        {step === 3 && (
+        {step === 3 && availavleDishes && (
           <ThirdStep
-            dishes={dishes}
-            setDishes={setDishes}
-            dishesNum={dishesNum}
-            setDishesNum={setDishesNum}
+            setPeople={watch('people')}
+            availavleDishes={availavleDishes}
+            register={register}
+            errors={errors}
           />
         )}
-        {step === 4 && <ReviewStep />}
+        {step === 4 && (
+          <ReviewStep
+            meal={watch('meal')}
+            people={watch('people')}
+            restaurant={watch('restaurant')}
+            dishes={watch('dishes')}
+            servings={watch('servings')}
+          />
+        )}
 
         <Grid container>
           {step !== 1 && (
@@ -118,14 +195,18 @@ function App() {
           )}
           {step !== 4 && (
             <Grid item ml="auto">
-              <Button variant="contained" onClick={incStep}>
+              <Button
+                variant="contained"
+                onClick={incStep}
+                disabled={!showNextButton}
+              >
                 Next
               </Button>
             </Grid>
           )}
           {step === 4 && (
             <Grid item ml="auto">
-              <Button variant="contained" onClick={submitForm}>
+              <Button variant="contained" onClick={onSubmit} type="submit">
                 Submit
               </Button>
             </Grid>
