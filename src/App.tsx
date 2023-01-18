@@ -120,15 +120,19 @@ function App() {
 
     // showFourthStep
     useEffect(() => {
-      console.log('servings', watch('servings'));
-      console.log('showFourthStep', showFourthStep);
-      if (0 < watch('servings') && watch('servings') < 11) {
-        console.log('set true');
-        setShowFourthStep(true);
+      if (watch('dishes')) {
+        if (
+          0 < watch('servings') &&
+          watch('servings') <= 10 * watch('people')
+        ) {
+          setShowFourthStep(true);
+        } else {
+          setShowFourthStep(false);
+        }
       } else {
         setShowFourthStep(false);
       }
-    }, [watch('servings')]);
+    }, [watch('dishes'), watch('servings')]);
 
     // showNextStep
     useEffect(() => {
@@ -141,7 +145,7 @@ function App() {
       } else {
         setShowNextButton(false);
       }
-    }, [showSecondStep, showThirdStep, step]);
+    }, [showSecondStep, showThirdStep, showFourthStep, step]);
 
     return (
       <div>
