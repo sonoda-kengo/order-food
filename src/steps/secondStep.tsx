@@ -1,19 +1,22 @@
 import { Box, Grid, Typography } from '@mui/material';
-import { IDishesaObject } from 'App';
-import DropDownMenu from 'components/dropDownMenu';
+import { IRestaurantObject, InputFormType } from 'App';
 import React from 'react';
+import { FieldErrorsImpl, UseFormRegister } from 'react-hook-form';
 
 interface ISecondStep {
-  availableRestaurant: IDishesaObject[];
-  restaurant: string | undefined;
-  setRestaurant: (value: string) => void;
+  availableRestaurant: IRestaurantObject[];
+  register: UseFormRegister<InputFormType>;
+  errors: Partial<
+    FieldErrorsImpl<{
+      meal: string;
+      people: number;
+      restaurant: string;
+      dishes: object;
+    }>
+  >;
 }
 
-function SecondStep({
-  availableRestaurant,
-  restaurant,
-  setRestaurant,
-}: ISecondStep) {
+function SecondStep({ availableRestaurant, register, errors }: ISecondStep) {
   return (
     <Box>
       <Grid
@@ -24,13 +27,17 @@ function SecondStep({
       >
         <Grid item mb={5}>
           <Typography>Please Select a Restaurant</Typography>
-          <DropDownMenu
-            inputLabel="restaurant"
-            value={restaurant}
-            setValue={setRestaurant}
-            dropDownMenuObjects={availableRestaurant}
-          />
+          <select {...register('restaurant', { required: 'required' })}>
+            {availableRestaurant.map((res, id) => (
+              <option key={id} value={res.restaurant}>
+                {res.restaurant}
+              </option>
+            ))}
+          </select>
         </Grid>
+        <Typography color="warning.main">
+          {errors.restaurant?.message}
+        </Typography>
       </Grid>
     </Box>
   );

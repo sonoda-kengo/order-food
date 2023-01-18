@@ -1,25 +1,23 @@
 import { Box, Grid, Typography } from '@mui/material';
-import { typeMeal } from 'App';
-import DropDownMenu from 'components/dropDownMenu';
-import NumTextField from 'components/numTextField';
+import { InputFormType } from 'App';
 import React from 'react';
+import { FieldErrorsImpl, UseFormRegister } from 'react-hook-form';
 
 interface IFirstStep {
-  meal: typeMeal | undefined;
-  setMeal: (value: typeMeal) => void;
-  people: number;
-  setPeople: (value: number) => void;
+  register: UseFormRegister<InputFormType>;
+  errors: Partial<
+    FieldErrorsImpl<{
+      meal: string;
+      people: number;
+      restaurant: string;
+      dishes: object;
+    }>
+  >;
 }
 
-const mealObjects = [
-  { name: 'breakfast' },
-  { name: 'lunch' },
-  { name: 'dinner' },
-];
+const numberRegExp = /^[0-9]+$/;
 
-console.log(mealObjects);
-
-function FirstStep({ meal, setMeal, people, setPeople }: IFirstStep) {
+function FirstStep({ register, errors }: IFirstStep) {
   return (
     <Box>
       <Grid
@@ -30,16 +28,35 @@ function FirstStep({ meal, setMeal, people, setPeople }: IFirstStep) {
       >
         <Grid item mb={5}>
           <Typography>Please Select a meal</Typography>
-          <DropDownMenu
-            inputLabel="meal"
-            value={meal}
-            setValue={setMeal}
-            dropDownMenuObjects={mealObjects}
-          />
+          <select {...register('meal', { required: 'required' })}>
+            <option value="breakfast">breakfast</option>
+            <option value="lunch">lunch</option>
+            <option value="dinner">dinner</option>
+          </select>
+          <Typography color="warning.main">{errors.meal?.message}</Typography>
         </Grid>
         <Grid item mb={5}>
           <Typography>Please Enter Number of people</Typography>
-          <NumTextField numValue={people} setNumValue={setPeople} />
+          <input
+            type="number"
+            {...register('people', {
+              valueAsNumber: true,
+              required: '必須項目です',
+              pattern: {
+                value: numberRegExp,
+                message: '整数で入力してください',
+              },
+              min: {
+                value: 1,
+                message: '1以上の数字を入力してください',
+              },
+              max: {
+                value: 10,
+                message: '10以下の数字を入力してください',
+              },
+            })}
+          />
+          <Typography color="warning.main">{errors.people?.message}</Typography>
         </Grid>
       </Grid>
     </Box>

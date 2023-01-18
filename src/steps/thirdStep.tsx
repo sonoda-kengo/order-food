@@ -1,16 +1,24 @@
 import { Box, Grid, Typography } from '@mui/material';
-import DropDownMenu from 'components/dropDownMenu';
-import NumTextField from 'components/numTextField';
+import { IDishesObject, InputFormType } from 'App';
 import React from 'react';
+import { FieldErrorsImpl, UseFormRegister } from 'react-hook-form';
 
 interface IThirdStep {
-  dishes: string | undefined;
-  setDishes: (value: string) => void;
-  dishesNum: number;
-  setDishesNum: (value: number) => void;
+  availavleDishes: IDishesObject[];
+  register: UseFormRegister<InputFormType>;
+  errors: Partial<
+    FieldErrorsImpl<{
+      meal: string;
+      people: number;
+      restaurant: string;
+      dishes: object;
+    }>
+  >;
 }
 
-function ThirdStep({ dishes, setDishes, dishesNum, setDishesNum }: IThirdStep) {
+const numberRegExp = /^[0-9]+$/;
+
+function ThirdStep({ availavleDishes, register, errors }: IThirdStep) {
   return (
     <Box>
       <Grid
@@ -21,11 +29,35 @@ function ThirdStep({ dishes, setDishes, dishesNum, setDishesNum }: IThirdStep) {
       >
         <Grid item mb={5}>
           <Typography>Please Select a Dish</Typography>
-          <DropDownMenu inputLabel="dish" value={dishes} setValue={setDishes} />
+          <select {...register('dishes', { required: 'required' })}>
+            {availavleDishes.map((val, id) => (
+              <option key={val.id} value={val.name}>
+                {val.name}
+              </option>
+            ))}
+          </select>
         </Grid>
         <Grid item mb={5}>
           <Typography>Please Enter Number of seivings</Typography>
-          <NumTextField numValue={dishesNum} setNumValue={setDishesNum} />
+          <input
+            type="number"
+            {...register('servings', {
+              valueAsNumber: true,
+              required: '必須項目です',
+              pattern: {
+                value: numberRegExp,
+                message: '整数で入力してください',
+              },
+              min: {
+                value: 1,
+                message: '1以上の数字を入力してください',
+              },
+              max: {
+                value: 10,
+                message: '10以下の数字を入力してください',
+              },
+            })}
+          />
         </Grid>
       </Grid>
     </Box>

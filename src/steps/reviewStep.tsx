@@ -1,11 +1,10 @@
 import { Box, Grid, Button, Typography } from '@mui/material';
-import { typeMeal } from 'App';
 import DropDownMenu from 'components/dropDownMenu';
 import NumTextField from 'components/numTextField';
 import React from 'react';
 
 interface IReviewStep {
-  meal?: typeMeal | undefined;
+  meal?: string;
 }
 
 function ReviewStep({ meal }: IReviewStep) {
