@@ -24,42 +24,42 @@ function ReviewStep({
         alignItems="center"
         direction="column"
       >
-        <Grid item mb={5}>
+        <Grid item mb={5} width="300px">
           <Grid container direction="row" spacing={4}>
-            <Grid item>
-              <Typography>Meal</Typography>
+            <Grid item xs={6}>
+              <Typography color="text.secondary">Meal</Typography>
             </Grid>
-            <Grid item>
+            <Grid item xs={6}>
               <Typography>{meal}</Typography>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item mb={5}>
+        <Grid item mb={5} width="300px">
           <Grid container direction="row" spacing={4}>
-            <Grid item>
-              <Typography>No. of. People</Typography>
+            <Grid item xs={6}>
+              <Typography color="text.secondary">No. of. People</Typography>
             </Grid>
-            <Grid item>
+            <Grid item xs={6}>
               <Typography>{people}</Typography>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item mb={5}>
+        <Grid item mb={5} width="300px">
           <Grid container direction="row" spacing={4}>
-            <Grid item>
-              <Typography>Restaurant</Typography>
+            <Grid item xs={6}>
+              <Typography color="text.secondary">Restaurant</Typography>
             </Grid>
-            <Grid item>
+            <Grid item xs={6}>
               <Typography>{restaurant}</Typography>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item mb={5}>
+        <Grid item mb={5} width="300px">
           <Grid container direction="row" spacing={4}>
-            <Grid item>
-              <Typography>Dishes</Typography>
+            <Grid item xs={6}>
+              <Typography color="text.secondary">Dish</Typography>
             </Grid>
-            <Grid item>
+            <Grid item xs={6}>
               <Typography>
                 {dishes} {servings}
               </Typography>
