@@ -24,6 +24,13 @@ function SecondStep({ availableRestaurant, register, errors }: ISecondStep) {
             {...register('restaurant', {
               required: 'Restaurant is required',
             })}
+            style={{
+              width: '180px',
+              height: '40px',
+              fontSize: '18px',
+              border: '2px solid #bdbdbd',
+              borderRadius: '10px',
+            }}
           >
             {availableRestaurant.map((res, id) => (
               <option key={id} value={res.restaurant}>
